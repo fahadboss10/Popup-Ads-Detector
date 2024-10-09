@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Popup Ads Detector</title>
+    <!-- Import Materialize CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css" rel="stylesheet">
+    <style>
+        /* Flexbox layout for full height */
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+        }
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f9f9f9;
+        }
+
+        .container {
+            margin-top: 50px;
+            flex: 1; /* Make container take available space */
+            padding-bottom: 60px; /* Give space for footer */
+        }
+        #result {
+            margin-top: 20px;
+            font-size: 18px;
+        }
+
+        footer {
+            padding: 5px 0; /* Set small padding for plain footer */
+            text-align: center;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            font-size: 12px; /* Set smaller text size */
+            line-height: 1.5; /* Adjust line height for better readability */
+            background-color: transparent; /* No background color */
+            color: #000; /* Text color set to black */
+        }
+
+        .materialize-btn {
+            background-color: #26a69a;
+        }
+        .materialize-btn:hover {
+            background-color: #00796b;
+        }
+
+        /* Scrollable textarea */
+        .materialize-textarea {
+            max-height: 200px; /* Adjust the max height to 200px */
+            overflow-y: auto;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1 class="center-align teal-text text-darken-2">Popup Ads Detector</h1>
+        <p class="center-align">Paste your log below and click "Find Hidden App" to detect hidden app package names.</p>
+
+        <div class="row">
+            <div class="col s12">
+                <div class="input-field">
+                    <textarea id="logInput" class="materialize-textarea" placeholder="Paste the log here..."></textarea>
+                </div>
+            </div>
+        </div>
+        <div class="center-align">
+            <button class="btn waves-effect waves-light materialize-btn" onclick="processLog()">Find Hidden App</button>
+        </div>
+
+        <div id="result"></div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="page-footer">
+        <p>&copy; 2024 Digital Communication. All rights reserved.</p>
+    </footer>
+
+    <!-- Import Materialize JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+
+    <script>
+        function processLog() {
+            const logText = document.getElementById("logInput").value;
+            const resultDiv = document.getElementById("result");
+            resultDiv.innerHTML = "";
+
+            // Regular expression to find package names within brackets [] after 'W SurfaceFlinger:'
+            const regex = /W SurfaceFlinger:\s+\[([^\]]+)\]/g;
+            let match;
+            let packages = new Set();
+
+            // Extract all matches and avoid duplicates using a Set
+            while ((match = regex.exec(logText)) !== null) {
+                packages.add(match[1]); // Add to the set to avoid duplicates
+            }
+
+            // Display the result
+            if (packages.size > 0) {
+                let output = "<h3>Hidden Apps Detected:</h3><ol>";
+                packages.forEach(pkg => {
+                    output += `<li>${pkg}</li>`;
+                });
+                output += "</ol>";
+                resultDiv.innerHTML = output;
+            } else {
+                resultDiv.innerHTML = "<p>No hidden apps found.</p>";
+            }
+        }
+    </script>
+
+</body>
+</html>
