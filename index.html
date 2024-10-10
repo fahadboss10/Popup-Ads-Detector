@@ -4,85 +4,81 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Popup Ads Detector</title>
-    <!-- Import Materialize CSS -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;600&display=swap" rel="stylesheet">
     <style>
-        /* Flexbox layout for full height */
-        html, body {
-            height: 100%;
-            margin: 0;
-            padding: 0;
+        body {
+            font-family: 'Jost', sans-serif;
+            background-color: #f3f4f6;
+            min-height: 100vh;
             display: flex;
             flex-direction: column;
-        }
-        body {
-            font-family: 'Roboto', sans-serif;
-            background-color: #f9f9f9;
+            justify-content: center;
+            align-items: center;
+            margin: 0;
         }
 
         .container {
-            margin-top: 50px;
-            flex: 1; /* Make container take available space */
-            padding-bottom: 60px; /* Give space for footer */
-        }
-        #result {
-            margin-top: 20px;
-            font-size: 18px;
-        }
-
-        footer {
-            padding: 5px 0; /* Set small padding for plain footer */
             text-align: center;
-            position: fixed;
-            bottom: 0;
             width: 100%;
-            font-size: 12px; /* Set smaller text size */
-            line-height: 1.5; /* Adjust line height for better readability */
-            background-color: transparent; /* No background color */
-            color: #000; /* Text color set to black */
+            max-width: 800px;
         }
 
-        .materialize-btn {
-            background-color: #26a69a;
-        }
-        .materialize-btn:hover {
-            background-color: #00796b;
+        .textarea-container {
+            margin: 20px 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
 
-        /* Scrollable textarea */
-        .materialize-textarea {
-            max-height: 200px; /* Adjust the max height to 200px */
+        #logInput {
+            padding: 20px;
+            font-size: 18px;
+            border: 2px solid #4b5563;
+            border-radius: 8px;
+            width: 100%;
+            height: 200px;
+            resize: none;
             overflow-y: auto;
+            margin-left: 20px; /* Added margin to the left */
+            margin-right: 20px; /* Added margin to the right */
+        }
+
+        .footnote {
+            margin-top: 40px;
+            font-size: 14px;
+            color: #6b7280;
+        }
+
+        #result {
+            text-align: left;
+            margin-top: 20px;
+            margin-left: 20px; /* Added margin to the left for Hidden Apps section */
+            margin-right: 20px; /* Added margin to the right for Hidden Apps section */
         }
     </style>
 </head>
 <body>
 
     <div class="container">
-        <h1 class="center-align teal-text text-darken-2">Popup Ads Detector</h1>
-        <p class="center-align">Paste your log below and click "Find Hidden App" to detect hidden app package names.</p>
+        <h2 class="text-4xl font-bold text-gray-800 mb-6">Popup Ads Detector</h2>
 
-        <div class="row">
-            <div class="col s12">
-                <div class="input-field">
-                    <textarea id="logInput" class="materialize-textarea" placeholder="Paste the log here..."></textarea>
-                </div>
-            </div>
+        <p class="text-lg text-gray-600">Paste your log below and click "Find Hidden App" to detect hidden app package names.</p>
+
+        <div class="textarea-container">
+            <textarea id="logInput" placeholder="Paste the log here..." oninput="updateStats()"></textarea>
         </div>
-        <div class="center-align">
-            <button class="btn waves-effect waves-light materialize-btn" onclick="processLog()">Find Hidden App</button>
-        </div>
+
+        <div id="stats" class="text-gray-600 text-sm mb-4">Lines: 0 | Characters: 0</div>
+
+        <button class="bg-blue-500 text-white px-6 py-2 rounded-lg hover:bg-blue-700" onclick="processLog()">Find Hidden App</button>
 
         <div id="result"></div>
+
+        <div class="footnote">
+            Developed by: Digital Communication &copy; <span id="currentYear"></span>
+        </div>
     </div>
-
-    <!-- Footer -->
-    <footer class="page-footer">
-        <p>&copy; 2024 Digital Communication. All rights reserved.</p>
-    </footer>
-
-    <!-- Import Materialize JS -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
 
     <script>
         function processLog() {
@@ -102,16 +98,26 @@
 
             // Display the result
             if (packages.size > 0) {
-                let output = "<h3>Hidden Apps Detected:</h3><ol>";
+                let output = "<h3 class='text-lg font-semibold text-gray-800'>Hidden Apps Detected:</h3><ol class='list-decimal ml-5'>";
                 packages.forEach(pkg => {
                     output += `<li>${pkg}</li>`;
                 });
                 output += "</ol>";
                 resultDiv.innerHTML = output;
             } else {
-                resultDiv.innerHTML = "<p>No hidden apps found.</p>";
+                resultDiv.innerHTML = "<p class='text-gray-600'>No hidden apps found.</p>";
             }
         }
+
+        function updateStats() {
+            const text = document.getElementById("logInput").value;
+            const lines = text.split("\n").length; // Calculate number of lines
+            const chars = text.length; // Calculate number of characters
+            document.getElementById("stats").innerText = `Lines: ${lines} | Characters: ${chars}`;
+        }
+
+        // Set the current year
+        document.getElementById('currentYear').innerText = new Date().getFullYear();
     </script>
 
 </body>
